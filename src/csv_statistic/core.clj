@@ -32,7 +32,7 @@
 (defn cartesian-pairs 
 "Function read col and return list of all possible pairs [ [x1 x2] .. [xi xj] ] where xi not = xj and xi not number   "
 [ coll ]
-;(def collection (atom {:ver "0.0.1"}))
+
   (->  
   (for [x coll  y coll  :when ( < (count x) 20)  :when (not= x y) :when (and (not (number? x)) ( not (number? y))) 
   :when ( < (.indexOf coll x)  (.indexOf coll y))  ] 
@@ -53,7 +53,7 @@
 (defn printObject 
 " get object from the list assuming it is map and print all it's elements"
 [& param]
-; debug (println (nth param 1))
+
            ( def object (nth param 1) )
  		   ( ->
 		     (println)
@@ -141,7 +141,7 @@
  
  (time (doall 
   (for [x coll  y coll :when (and (not ( blank? x))(not ( blank? y))(not= x y)) :when (and ( < (.indexOf coll x)(.indexOf coll y)) ) ]
-;  :when ( reg-exp-filter x y ) ] 
+
    (str ":" (ws-replce (trim x)) "|" (ws-replce (trim y)) )  ) 
 ))
    ) 
@@ -220,17 +220,24 @@
 		 (add-uniquekeys-to-map (rest csv) indexes) 
         ))	
 		
-       (println collection)	
-
-  ; (for [x (rest csv)] 
-         ;(add-keyvalue-to-map (ws-replce (get x 1)) collection)
-		(time (doall  
-		 (add-cartesian-pairs-to-map (rest csv) indexes) 
+       (println "Hash map of unique elements with theirs frequency: " collection)	
+		; This is very time and memory consuming function  
+	   	;(time (doall  
+		; (add-cartesian-pairs-to-map (rest csv) indexes) 
 		 ; (add-cartesian-pairs-to-map x) ;(list ws-replce x ) ;"Elapsed time: 16135.905126 msecs"
 		;( myfunc-memo x) ;"Elapsed time: 20594.399339 msecs"
-        ))	
-		;	) ;for
-     
+        ;))	
+
+		 (time (doall  
+		; (println
+		   (for [x (rest csv) y (rest csv) indx indexes :when (and (not ( blank? (nth x indx))) (not ( blank? (nth y indx))) (not= (nth x indx) (nth y indx)) )  ] ;:when (and ( < (.indexOf coll x)(.indexOf coll y)) ) 
+			 ; get first index and use it to navigate it to column , then use this column to create all possible combination's elements from this column with element of collection 
+			 (add-keyvalue-to-map ( str (ws-replce (nth x indx)) "|" (ws-replce (nth y indx)) ) collection)
+			 
+			) ;for
+		;	)
+		 ))	
+		 
 ;(println "row: " (inc row)
 
  	
@@ -238,5 +245,7 @@
    ) ; let  
   ) ;doall
 ) ; with	
-(println collection)
+
+		
+       (println "Hash map of unique Cartesian pairs elements with theirs frequency: " collection)	
  ) ;main
